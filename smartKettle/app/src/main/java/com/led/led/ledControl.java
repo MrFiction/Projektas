@@ -1,7 +1,7 @@
 package com.led.led;
 
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.io.InputStreamReader;
 import java.util.UUID;
 
-public class ledControl extends ActionBarActivity {
+public class ledControl extends AppCompatActivity {
 
     Button btnDis;
     Button onOFF;
