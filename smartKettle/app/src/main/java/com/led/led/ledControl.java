@@ -1,35 +1,53 @@
 package com.led.led;
 
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.AsyncTask;
 
+import android.util.Log;
+import org.w3c.dom.Text;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.InputStreamReader;
 import java.util.UUID;
 
 public class ledControl extends ActionBarActivity {
 
     Button btnDis;
+    Button heatOn;
+    Button heatOff;
+    TextView txtArduino;
     String address = null;
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
     BluetoothSocket btSocket = null;
     private boolean isBtConnected = false;
 
+    private InputStream inStream = null;
+    Handler handler = new Handler();
+    byte delimiter = 10;
+    boolean stopWorker = false;
+    int readBufferPosition = 0;
+    byte[] readBuffer = new byte[1024];
+
     // SPP UUID
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent newint = getIntent();
@@ -39,25 +57,132 @@ public class ledControl extends ActionBarActivity {
         setContentView(R.layout.activity_led_control);
 
         // iškviesti valdiklius
-        btnDis = (Button)findViewById(R.id.button1);
+        btnDis = (Button) findViewById(R.id.button1);
 
         new ConnectBT().execute(); // Iškviesti klasę prisijungimui
 
-        btnDis.setOnClickListener(new View.OnClickListener()
-        {
+        btnDis.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Disconnect(); // atsijungti
             }
         });
 
+        heatOn = (Button) findViewById(R.id.button2);
+        heatOff = (Button) findViewById(R.id.button3);
+
+
+        heatOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                turnHeatingOff(); // nekaitinti
+            }
+        });
+
+        heatOn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText temp = (EditText) findViewById(R.id.editText3);
+                int sk = Integer.valueOf(temp.getText().toString());
+                turnHeatingOn(sk); // kaitinti
+            }
+        });
+
+        txtArduino = (TextView) findViewById(R.id.textView7);
     }
 
-    private void turnHeating()
-    {
-        
+
+    public void gautiData()   {
+        try {
+            inStream = btSocket.getInputStream();
+        } catch (IOException e) {
+        }
+
+        Thread workerThread = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                while(!Thread.currentThread().isInterrupted() && !stopWorker)
+                {
+                    try
+                    {
+                        int bytesAvailable = inStream.available();
+                        if(bytesAvailable > 0)
+                        {
+                            byte[] packetBytes = new byte[bytesAvailable];
+                            inStream.read(packetBytes);
+                            for(int i=0;i<bytesAvailable;i++)
+                            {
+                                byte b = packetBytes[i];
+                                if(b == delimiter)
+                                {
+                                    byte[] encodedBytes = new byte[readBufferPosition];
+                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+                                    final String data = new String(encodedBytes, "US-ASCII");
+                                    readBufferPosition = 0;
+                                    handler.post(new Runnable()
+                                    {
+                                        public void run()
+                                        {
+
+                                            if(txtArduino.getText().toString().equals("..")) {
+                                                txtArduino.setText(data);
+                                            } else {
+                                                txtArduino.setText(data);
+                                            }
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    readBuffer[readBufferPosition++] = b;
+                                }
+                            }
+                        }
+                    }
+                    catch (IOException ex)
+                    {
+                        stopWorker = true;
+                    }
+                }
+            }
+        });
+
+        workerThread.start();
     }
+
+    private void turnHeatingOff()
+    {
+        if (btSocket!=null)
+        {
+            try
+            {
+                btSocket.getOutputStream().write(0);
+                msg("Nekaitinama");
+            }
+            catch (IOException e)
+            {
+                msg("Error");
+            }
+        }
+    }
+
+    private void turnHeatingOn(final int temp)
+    {
+        if (btSocket!=null)
+        {
+            try
+            {
+                btSocket.getOutputStream().write(temp);
+                msg("Kaitinama");
+            }
+            catch (IOException e)
+            {
+                msg("Error");
+            }
+        }
+    }
+
     private void Disconnect()
     {
         if (btSocket!=null) // jei Bluetooth Socket užimtas
@@ -100,7 +225,8 @@ public class ledControl extends ActionBarActivity {
                  BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address); // prisijungia prie prietaiso adreso ir patikrina, jei jis galimas
                  btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID); // sukuriamas RFCOMM (SPP) ryšys
                  BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                 btSocket.connect(); // pradedama prisijungti
+                 btSocket.connect(); // pradedama prisijungt
+                    gautiData();
                 }
             }
             catch (IOException e)
