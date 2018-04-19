@@ -54,6 +54,10 @@ public class ledControl extends ActionBarActivity {
 
     }
 
+    private void turnHeating()
+    {
+        
+    }
     private void Disconnect()
     {
         if (btSocket!=null) // jei Bluetooth Socket užimtas
@@ -61,7 +65,7 @@ public class ledControl extends ActionBarActivity {
             try
             {
                 btSocket.close(); // išjungti ryšį
-                // msg("Atsijungta.");                      CIA
+                msg("Atsijungta.");
             }
             catch (IOException e)
             { msg("Klaida");}
