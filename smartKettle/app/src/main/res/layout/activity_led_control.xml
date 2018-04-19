@@ -13,15 +13,6 @@
         android:layout_centerHorizontal="true"
         android:text="Atsijungti" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="114dp"
-        android:text="Kaitinti" />
-
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
@@ -30,16 +21,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:text="Norima temperatūra" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button1"
-        android:layout_alignLeft="@+id/button1"
-        android:layout_alignStart="@+id/button1"
-        android:layout_marginBottom="34dp"
-        android:text="Nekaitinti" />
 
     <EditText
         android:id="@+id/editText3"
@@ -54,21 +35,30 @@
         android:text="0" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText3"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="39dp"
+        android:layout_marginTop="40dp"
         android:text="Gaunama temperatūra" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView6"
+        android:layout_below="@+id/textView3"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
         android:text="0" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="54dp"
+        android:text="VIRTI" />
 
 </RelativeLayout>

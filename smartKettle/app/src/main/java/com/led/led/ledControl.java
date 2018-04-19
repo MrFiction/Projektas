@@ -27,8 +27,7 @@ import java.util.UUID;
 public class ledControl extends ActionBarActivity {
 
     Button btnDis;
-    Button heatOn;
-    Button heatOff;
+    Button onOFF;
     TextView txtArduino;
     String address = null;
     private ProgressDialog progress;
@@ -56,7 +55,6 @@ public class ledControl extends ActionBarActivity {
         // ledControl vaizdas
         setContentView(R.layout.activity_led_control);
 
-        // iškviesti valdiklius
         btnDis = (Button) findViewById(R.id.button1);
 
         new ConnectBT().execute(); // Iškviesti klasę prisijungimui
@@ -68,34 +66,51 @@ public class ledControl extends ActionBarActivity {
             }
         });
 
-        heatOn = (Button) findViewById(R.id.button2);
-        heatOff = (Button) findViewById(R.id.button3);
+        txtArduino = (TextView) findViewById(R.id.textView4);  // arduino temperatura
 
+        onOFF = (Button)findViewById(R.id.button4); // virti ar stabdyti
 
-        heatOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                turnHeatingOff(); // nekaitinti
-            }
-        });
-
-        heatOn.setOnClickListener(new View.OnClickListener() {
+        onOFF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EditText temp = (EditText) findViewById(R.id.editText3);
                 int sk = Integer.valueOf(temp.getText().toString());
-                turnHeatingOn(sk); // kaitinti
+                sk = sk + 100;
+                turnHeatingOfforON(sk); // switch
             }
         });
 
-        txtArduino = (TextView) findViewById(R.id.textView7);
     }
 
+    private void turnHeatingOfforON(int temp)
+    {
+        if (btSocket!=null)
+        {
+            try
+            {
+                if(onOFF.getText().equals("VIRTI"))
+                {
+                    onOFF.setText("STABDYTI");
+                    btSocket.getOutputStream().write(temp);
+                }
+                else
+                {
+                    onOFF.setText("VIRTI");
+                    btSocket.getOutputStream().write(0);
+                }
+            }
+            catch (IOException e)
+            {
+                msg("Error");
+            }
+        }
+    }
 
-    public void gautiData()   {
-        try {
+    private void getData() {
+        try  {
             inStream = btSocket.getInputStream();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
         }
 
         Thread workerThread = new Thread(new Runnable()
@@ -124,7 +139,6 @@ public class ledControl extends ActionBarActivity {
                                     {
                                         public void run()
                                         {
-
                                             if(txtArduino.getText().toString().equals("..")) {
                                                 txtArduino.setText(data);
                                             } else {
@@ -147,40 +161,7 @@ public class ledControl extends ActionBarActivity {
                 }
             }
         });
-
         workerThread.start();
-    }
-
-    private void turnHeatingOff()
-    {
-        if (btSocket!=null)
-        {
-            try
-            {
-                btSocket.getOutputStream().write(0);
-                msg("Nekaitinama");
-            }
-            catch (IOException e)
-            {
-                msg("Error");
-            }
-        }
-    }
-
-    private void turnHeatingOn(final int temp)
-    {
-        if (btSocket!=null)
-        {
-            try
-            {
-                btSocket.getOutputStream().write(temp);
-                msg("Kaitinama");
-            }
-            catch (IOException e)
-            {
-                msg("Error");
-            }
-        }
     }
 
     private void Disconnect()
@@ -226,7 +207,7 @@ public class ledControl extends ActionBarActivity {
                  btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID); // sukuriamas RFCOMM (SPP) ryšys
                  BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
                  btSocket.connect(); // pradedama prisijungt
-                    gautiData();
+                    getData();
                 }
             }
             catch (IOException e)
