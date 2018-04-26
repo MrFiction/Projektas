@@ -101,7 +101,7 @@ public class ledControl extends AppCompatActivity {
                 boolean check = switcher.isChecked();
                 if(!check)
                 {
-                    sk = 200; // kaitinama iki 100
+                    sk = 190; // kaitinama iki 100
                     turnHeatingOfforON(sk);
                 }
                 else
@@ -197,9 +197,26 @@ public class ledControl extends AppCompatActivity {
                                             else
                                             {
                                                 arduinoData.setText(data);
-                                                if(arduinoData.getText().toString().equals("25\r")) // testui iki 25
+                                                boolean check = switcher.isChecked();
+                                                if(check)
                                                 {
-                                                    getNotifications(); // 100 pasiekus issiunciamas notificationas
+                                                    int temperatura = Integer.valueOf(temp.getText().toString());
+                                                    String tempas = temperatura + "\r";
+
+                                                    if(arduinoData.getText().toString().equals(tempas))
+                                                    {
+                                                        getNotifications();
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    int temperatura = 90; // eis iki 90 laipsniu
+                                                    String tempas = temperatura + "\r";
+
+                                                    if(arduinoData.getText().toString().equals(tempas))
+                                                    {
+                                                        getNotifications();
+                                                    }
                                                 }
                                             }
                                         }
