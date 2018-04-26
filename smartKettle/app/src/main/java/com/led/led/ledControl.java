@@ -121,7 +121,24 @@ public class ledControl extends AppCompatActivity {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle("Pranešimas")
-                        .setContentText("Užvirė vanduo. Išjunkite virdulį!");
+                        .setContentText("Vanduo pasiekė pasirinktiną temperatūros!");
+
+        Intent notificationIntent = new Intent(this, AppCompatActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0, builder.build());
+    }
+
+    private void getNotifications2()
+    {
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("Pranešimas")
+                        .setContentText("Vanduo užvirė iki numatytos temperatūros!");
 
         Intent notificationIntent = new Intent(this, AppCompatActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
@@ -197,25 +214,26 @@ public class ledControl extends AppCompatActivity {
                                             else
                                             {
                                                 arduinoData.setText(data);
+
                                                 boolean check = switcher.isChecked();
                                                 if(check)
                                                 {
                                                     int temperatura = Integer.valueOf(temp.getText().toString());
-                                                    String tempas = temperatura + "\r";
+                                                    final String tempas = temperatura + "\r";
 
-                                                    if(arduinoData.getText().toString().equals(tempas))
+                                                    if((arduinoData.getText().toString().equals(tempas)))
                                                     {
                                                         getNotifications();
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    int temperatura = 90; // eis iki 90 laipsniu
-                                                    String tempas = temperatura + "\r";
+                                                    int temperatura = 90;
+                                                    final String tempas = temperatura + "\r";
 
-                                                    if(arduinoData.getText().toString().equals(tempas))
+                                                    if((arduinoData.getText().toString().equals(tempas)))
                                                     {
-                                                        getNotifications();
+                                                        getNotifications2();
                                                     }
                                                 }
                                             }
