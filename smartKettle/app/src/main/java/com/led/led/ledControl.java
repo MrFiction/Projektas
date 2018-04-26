@@ -141,8 +141,7 @@ public class ledControl extends AppCompatActivity {
                 if(onOFF.getText().equals("VIRTI"))
                 {
                     onOFF.setText("STABDYTI");
-                    btSocket.getOutputStream().write(1);
-                    getNotifications();
+                    btSocket.getOutputStream().write(temp);
                 }
                 else
                 {
@@ -185,6 +184,7 @@ public class ledControl extends AppCompatActivity {
                                     byte[] encodedBytes = new byte[readBufferPosition];
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
                                     final String data = new String(encodedBytes, "US-ASCII");
+                                    final String toCompare = "25";
                                     readBufferPosition = 0;
                                     handler.post(new Runnable()
                                     {
@@ -197,7 +197,7 @@ public class ledControl extends AppCompatActivity {
                                             else
                                             {
                                                 arduinoData.setText(data);
-                                                if(arduinoData.getText().equals("25")) // testui iki 30
+                                                if(arduinoData.getText().toString().equals("25\r")) // testui iki 25
                                                 {
                                                     getNotifications(); // 100 pasiekus issiunciamas notificationas
                                                 }
