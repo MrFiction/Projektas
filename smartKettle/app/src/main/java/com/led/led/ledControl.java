@@ -83,7 +83,7 @@ public class ledControl extends AppCompatActivity {
                 }
                 else
                 {
-                    msg("Viriama iki numatytos temperatūros (100°)!");
+                    msg("Viriama iki numatytos temperatūros (90°)!");
                     temp.setVisibility(View.GONE);
                 }
         }});
@@ -224,6 +224,7 @@ public class ledControl extends AppCompatActivity {
                                                     if((arduinoData.getText().toString().equals(tempas)))
                                                     {
                                                         getNotifications();
+                                                        onOFF.setText("VIRTI");
                                                     }
                                                 }
                                                 else
@@ -234,6 +235,7 @@ public class ledControl extends AppCompatActivity {
                                                     if((arduinoData.getText().toString().equals(tempas)))
                                                     {
                                                         getNotifications2();
+                                                        onOFF.setText("VIRTI");
                                                     }
                                                 }
                                             }
