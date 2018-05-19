@@ -1,6 +1,6 @@
 #include <DallasTemperature.h>
-
 #include <OneWire.h>
+#include <stdio.h>
 
 #define ONE_WIRE_BUS 2
 
@@ -29,6 +29,7 @@ void loop(void)
   //Gauti temperatura is sensoriaus
   sensors.requestTemperatures();
   temperature = (int)sensors.getTempCByIndex(0);
+  
   input = Serial.read();
   Serial.println(temperature);
 
@@ -39,31 +40,41 @@ void loop(void)
     digitalWrite(7,LOW);
 
   //Injungti arba isjungti ------------------------------------------------------------------------------------------------------------------------------
-  
-  if(input == 1)
-    digitalWrite(7,HIGH);
+
+  if (temperature < 90)
+  {
+    if(input == 1)
+      digitalWrite(7,HIGH);
+  }
   if(input == 0)
     digitalWrite(7,LOW);
 
   //Kaitinti iki nurodytos temperaturos (gaunamas skaicius nuo 100 iki 200 yra temperatura) -------------------------------------------------------------
   
-  if (((temperature < 100) && ((input > 100) && (input < 200))))
+  if (((temperature < 90) && ((input >= 160) && (input <= 190))))
   {
     digitalWrite(7,HIGH);
+    boiled = true;
     while (boiled)
     {
-      if (temperature == 100)
+      sensors.requestTemperatures();
+      input = Serial.read();
+      temperature = (int)sensors.getTempCByIndex(0);
+      Serial.println(temperature);
+      state = digitalRead(8);
+      if (state == 0)
       {
-        boiled = false;
         digitalWrite(7,LOW);
+        boiled = false;
       }
+      if (input == 0)
+      {
+        digitalWrite(7,LOW);
+        boiled = false;
+      }
+      delay(1000);
     }
   }
-
-  //Keisti LED spalva -----------------------------------------------------------------------------------------------------------------------------------
-  
-  analogWrite(6,((int)sensors.getTempCByIndex(0)*2.55));
-  analogWrite(3,(255-(int)(sensors.getTempCByIndex(0)*2.55)));
   
   delay(1000);
 }
