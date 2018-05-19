@@ -17,18 +17,19 @@ public class MainActivity extends AppCompatActivity implements KnobView.OnAngleC
 
 
         final KnobView knob = new KnobView(this);
-        knob.setBackgroundColor(Color.GRAY);
-        knob.setPadding(20, 40, 60, 80);
+        knob.setBackgroundColor(Color.LTGRAY);
+        //knob.setPadding(100, 50, 100, 100);
         knob.setTheta((float)Math.PI * 4.0f);
         //knob.setGravity(Gravity.CENTER_VERTICAL);
         knob.setOnAngleChangedListener(this);
         setContentView(knob);
+       // knob.setEnabled(false);
 
     }
 
     public void onAngleChanged(float theta) {
         float volume = theta;
-        Log.i("TAG", "Volume changed to: " + Math.toDegrees(volume));
+        Log.i("TAG", "Volume changed to: " + volume);
 
     }
 }
