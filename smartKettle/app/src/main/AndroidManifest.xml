@@ -12,7 +12,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".DeviceList"
-            android:label="SmartKettle" >
+            android:label="SmartKettle"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,8 +21,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ledControl"
-            android:label="Smart Kettle" >
+            android:name=".KettleControl"
+            android:label="Smart Kettle"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
